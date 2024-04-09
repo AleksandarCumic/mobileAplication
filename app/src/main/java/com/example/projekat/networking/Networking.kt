@@ -7,6 +7,12 @@ import com.example.projekat.networking.serialization.AppJson
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
 val okHttpClient = OkHttpClient.Builder()
+    .addInterceptor {
+        val updatedRequest = it.request().newBuilder()
+            .addHeader("x-api-key", "live_R7sx37P9Wgipdy066hMQGkrVGwHGbTRNapRJnhFwdKt7acAir7q2s95SiXIQXFdj")
+            .build()
+        it.proceed(updatedRequest)
+    }
     .addInterceptor(
         HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BODY)
