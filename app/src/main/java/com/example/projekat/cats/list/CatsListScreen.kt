@@ -44,32 +44,33 @@ import com.example.projekat.core.theme.ProjekatTheme
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 
 
-@ExperimentalMaterial3Api
-fun NavGraphBuilder.catsListScreen(
-    route: String,
-    navController: NavController,
-) = composable(route = route) {
-    val catListViewModel = viewModel<CatsListViewModel>()
-    val state by catListViewModel.state.collectAsState()
-
-    CatListScreen(
-        state = state,
-        onInsertClick = {
-            navController.navigate(route = "cats/editor")
-        },
-        onItemClick = {
-            navController.navigate(route = "cats/${it.id}")
-        },
-    )
-}
+//@ExperimentalMaterial3Api
+//fun NavGraphBuilder.catsListScreen(
+//    route: String,
+//    navController: NavController,
+//) = composable(route = route) {
+//    val catListViewModel = viewModel<CatsListViewModel>()
+//    val state by catListViewModel.state.collectAsState()
+//
+//    CatListScreen(
+//        state = state,
+//        onInsertClick = {
+//            navController.navigate(route = "cats/editor")
+//        },
+//        onItemClick = {
+//            navController.navigate(route = "cats/${it.id}")
+//        },
+//    )
+//}
 
 
 @ExperimentalMaterial3Api
 @Composable
 fun CatListScreen(
-    state: CatsListState,
+    state: CatsListState?,
     onInsertClick: () -> Unit,
     onItemClick: (Cat) -> Unit,
 ) {
@@ -94,46 +95,14 @@ fun CatListScreen(
             }
         },
         content = {
-
-            CatList(
-                paddingValues = it,
-                items = state.cats,
-                onItemClick = onItemClick,
-            )
-
-            if (state.cats.isEmpty()) {
-                when (state.fetching) {
-                    true -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
-                    false -> {
-                        if (state.error != null) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                val errorMessage = when (state.error) {
-                                    is CatsListState.ListError.ListUpdateFailed ->
-                                        "Failed to load. Error message: ${state.error.cause?.message}."
-                                }
-                                Text(text = errorMessage)
-                            }
-                        } else {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Text(text = "No cats.")
-                            }
-                        }
-                    }
-                }
+            state?.let { currentState ->
+                CatList(
+                    paddingValues = it,
+                    items = currentState.cats,
+                    onItemClick = onItemClick,
+                    fetching = currentState.fetching,
+                    error = currentState.error,
+                )
             }
         }
     )
@@ -143,7 +112,9 @@ fun CatListScreen(
 private fun CatList(
     items: List<Cat>,
     paddingValues: PaddingValues,
-    onItemClick: (Cat) -> Unit
+    onItemClick: (Cat) -> Unit,
+    fetching: Boolean,
+    error: CatsListState.ListError?,
 ) {
     // LazyColumn should be used for infinite lists which we will
     // learn soon. In the meantime we can use Column with verticalScroll
@@ -161,7 +132,7 @@ private fun CatList(
 
         items.forEach {
             Column {
-                key(it.nameofTheBreed) {
+                key(it.id) {
                     LoginListItem(
                         data = it,
                         onClick = {
@@ -173,14 +144,52 @@ private fun CatList(
             }
         }
 
+        if (items.isEmpty()) {
+            when {
+                fetching -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        val errorMessage = when (error) {
+                            is CatsListState.ListError.ListUpdateFailed ->
+                                "Failed to load. Error message: ${error.cause?.message}."
+                            else -> "Unknown error occurred."
+                        }
+                        Text(
+                            text = errorMessage,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(text = "No cats.", textAlign = TextAlign.Center)
+                    }
+                }
+            }
+        }
     }
 }
+
 
 
 @Composable
 private fun LoginListItem(
     data: Cat,
     onClick: () -> Unit,
+
 ) {
     Card(
         modifier = Modifier

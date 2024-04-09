@@ -1,10 +1,13 @@
 package com.example.projekat.cats.repository
 
-import android.adservices.adid.AdId
+import com.example.projekat.cats.api.CatsApi
+import com.example.projekat.cats.api.model.CatsApiModel
 import com.example.projekat.cats.domain.Cat
+import com.example.projekat.networking.retrofit
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -17,10 +20,19 @@ import kotlin.time.Duration.Companion.seconds
  */
 object CatsRepository {
 
-    //    private var mutablePasswords = SampleData.toMutableList()
-    private val cats = MutableStateFlow(listOf<Cat>())
+    private val cats = MutableStateFlow<List<Cat>?>(null)
+    private val catsApi: CatsApi = retrofit.create(CatsApi::class.java)
 
-    fun allCats(): List<Cat> = cats.value
+    suspend fun fetchAllCats(): List<CatsApiModel> {
+        return try {
+            // We can here save this locally, or do any other calculations or whatever
+            delay(2.seconds)
+            catsApi.getAllCats()
+        } catch (e: Exception) {
+            // Handle the exception here
+            emptyList()
+        }
+    }
 
     /**
      * Simulates api network request which downloads sample data
@@ -28,13 +40,9 @@ object CatsRepository {
      */
     suspend fun fetchCats() {
         delay(2.seconds)
-        cats.update { SampleData.toMutableList() }
+        cats.update { SampleData.toList() }
     }
 
-    /**
-     * Simulates api network request which updates single password.
-     * It does nothing. Just waits for 1 second.
-     */
     suspend fun fetchCatDetails(catId: String) {
         delay(1.seconds)
     }
@@ -42,46 +50,20 @@ object CatsRepository {
     /**
      * Returns StateFlow which holds all passwords.
      */
-    fun observeCats(): Flow<List<Cat>> = cats.asStateFlow()
+    fun observeCats(): StateFlow<List<Cat>?> = cats.asStateFlow()
 
     /**
      * Returns regular flow with Cat with given catId.
      */
     fun observeCatDetails(catId: String): Flow<Cat?> {
         return observeCats()
-            .map { passwords -> passwords.find { it.id == catId } }
+            .map { passwords -> passwords?.find { it.id == catId } }
             .distinctUntilChanged()
     }
 
     // Ovo sve ispod je za editor ekran koji nemam
     
     fun getCatById(id: String): Cat? {
-        return cats.value.find { it.id == id }
-    }
-
-    fun deleteCat(id: String) {
-        cats.update { list ->
-            val index = list.indexOfFirst { it.id == id }
-            if (index != -1) {
-                list.toMutableList().apply { removeAt(index) }
-            } else {
-                list
-            }
-        }
-    }
-
-    fun updateOrInsertCat(id: String, data: Cat) {
-        cats.update { list ->
-            val index = list.indexOfFirst { it.id == id }
-            if (index != -1) {
-                list.toMutableList().apply {
-                    this[index] = data
-                }
-            } else {
-                list.toMutableList().apply {
-                    add(data)
-                }
-            }
-        }
+        return cats.value?.find { it.id == id }
     }
 }

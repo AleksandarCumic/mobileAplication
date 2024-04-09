@@ -33,7 +33,6 @@ class CatsDetailsViewModel(
     }
 
     init {
-        observeEvents()
         observeCatDetails()
         fetchCatDetails()
     }
@@ -49,23 +48,6 @@ class CatsDetailsViewModel(
                 .collect {
                     setState { copy(data = it) }
                 }
-        }
-    }
-
-    /**
-     * Observes events sent to this viewModel from UI.
-     */
-    private fun observeEvents() {
-        viewModelScope.launch {
-            events.collect {
-                when (it) {
-                    is CatsDetailsUiEvent.RequestCatDelete -> {
-                        deleteCats(id = it.catId)
-                    }
-
-                    else -> {}
-                }
-            }
         }
     }
 
@@ -92,12 +74,6 @@ class CatsDetailsViewModel(
             } finally {
                 setState { copy(fetching = false) }
             }
-        }
-    }
-
-    private fun deleteCats(id: String) {
-        viewModelScope.launch {
-            repository.deleteCat(id)
         }
     }
 }

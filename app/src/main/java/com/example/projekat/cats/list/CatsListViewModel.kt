@@ -31,11 +31,9 @@ class CatsListViewModel (
      * will cancel the subscription when view model dies.
      */
     private fun observeCats() {
-        // We are launching a new coroutine
         viewModelScope.launch {
-            // Which will observe all changes to our passwords
-            repository.observeCats().collect {
-                setState { copy(cats = it) }
+            repository.observeCats().collect { cats ->
+                _state.value = cats?.let { _state.value.copy(cats = it) }!!
             }
         }
     }
@@ -46,15 +44,15 @@ class CatsListViewModel (
      */
     private fun fetchCats() {
         viewModelScope.launch {
-            setState { copy(fetching = true) }
+            _state.value = _state.value.copy(fetching = true)
             try {
                 withContext(Dispatchers.IO) {
-                    repository.fetchCats()
+                    repository.fetchAllCats()
                 }
             } catch (error: IOException) {
-                setState { copy(error = CatsListState.ListError.ListUpdateFailed(cause = error)) }
+                _state.value = _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
             } finally {
-                setState { copy(fetching = false) }
+                _state.value = _state.value.copy(fetching = false)
             }
         }
     }
