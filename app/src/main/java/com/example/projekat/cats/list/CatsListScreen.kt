@@ -201,18 +201,18 @@ private fun LoginListItem(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-//                text = data.name + " (" + data.alternateName + ")",
+//                text = data.name + " (" + data.alt_names + ")",
                 text = data.name,
                 style = TextStyle(fontWeight = FontWeight.Bold)
             )
 //            Spacer(modifier = Modifier.height(8.dp))
 //            Text(
-//                text = data.descriptionShort,
+//                text = data.description,
 //                style = TextStyle(color = Color.Gray)
 //            )
 //            Spacer(modifier = Modifier.height(8.dp))
 //            Text(
-//                text = "Temperament: " + data.temperamentThree.joinToString(", "),
+//                text = "Temperament: " + data.temperament.joinToString(", "),
 //                style = TextStyle(fontStyle = FontStyle.Italic)
 //            )
         }

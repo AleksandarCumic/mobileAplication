@@ -3,13 +3,13 @@ package com.example.projekat.cats.domain
 data class Cat(
     val id: String,
     val name: String,
-//    val alternateName: String,
-//    var descriptionLong: String,
+//    val alt_names: String,
+//    var description: String,
 //    var descriptionShort: String,
-//    var temperamentList: List<String>,
+//    var temperament: List<String>,
 //    var temperamentThree: List<String> = temperamentList.take(3),
-//    // dodati sliku, saznati kako
-////    var countriesOfOrigin: List<String>,
+    // dodati sliku, saznati kako
+//    var countriesOfOrigin: List<String>,
 //    val averageAge: String,
 //    val averageWeight: String,
 //    val averageHeight: String,

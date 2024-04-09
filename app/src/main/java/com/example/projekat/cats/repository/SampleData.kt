@@ -6,10 +6,10 @@ val SampleData = listOf(
     Cat(
         id = "abys",
         name = "Abyssnian",
-//        alternateName = "Abys",
-//        descriptionLong = "The Abyssinian is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.",
+//        alt_names = "Abys",
+//        description = "The Abyssinian is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.",
 //        descriptionShort = "",
-//        temperamentList = listOf("Active", "Energetic", "Independent", "Intelligent", "Gentle"),
+//        temperament = listOf("Active", "Energetic", "Independent", "Intelligent", "Gentle"),
 //        temperamentThree = emptyList(),
 //        averageAge = "15"
     ),

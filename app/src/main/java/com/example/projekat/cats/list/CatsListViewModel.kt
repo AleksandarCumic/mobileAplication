@@ -62,7 +62,11 @@ class CatsListViewModel (
 
     private fun CatsApiModel.asCats() = Cat(
         id = this.id,
-        name = this.nameofTheBreed,
+        name = this.name,
+//        alt_names = this.alt_names,
 //        description = this.description,
+//        descriptionShort = this.descriptionShort,
+//        temperament = this.temperament,
+//        temperamentThree = this.temperamentThree
     )
 }
