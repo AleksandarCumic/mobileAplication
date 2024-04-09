@@ -10,7 +10,8 @@ val SampleData = listOf(
         descriptionLong = "The Abyssinian is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.",
         descriptionShort = "",
         temperamentList = listOf("Active", "Energetic", "Independent", "Intelligent", "Gentle"),
-        temperamentThree = emptyList()
+        temperamentThree = emptyList(),
+        averageAge = "15"
     ),
 
 )

@@ -10,7 +10,7 @@ data class Cat(
     var temperamentThree: List<String> = temperamentList.take(3),
     // dodati sliku, saznati kako
 //    var countriesOfOrigin: List<String>,
-//    val averageAge: String,
+    val averageAge: String,
 //    val averageWeight: String,
 //    val averageHeight: String,
 //    val rarity: Boolean,
