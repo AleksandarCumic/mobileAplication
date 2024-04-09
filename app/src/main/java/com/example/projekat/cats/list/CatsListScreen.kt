@@ -45,6 +45,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.substring
 
 
 @ExperimentalMaterial3Api
@@ -205,16 +206,17 @@ private fun LoginListItem(
                 text = data.name,
                 style = TextStyle(fontWeight = FontWeight.Bold)
             )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            Text(
-//                text = data.description,
-//                style = TextStyle(color = Color.Gray)
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            Text(
-//                text = "Temperament: " + data.temperament.joinToString(", "),
-//                style = TextStyle(fontStyle = FontStyle.Italic)
-//            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = data.description.take(250).plus("..."),
+                style = TextStyle(color = Color.Gray)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            val temperamentList = uzmiTri(data).joinToString(", ") // Prikaži tri nasumično odabrana temperamenta
+            Text(
+                text = temperamentList,
+                style = TextStyle(fontStyle = FontStyle.Italic)
+            )
         }
         Icon(
             modifier = Modifier.padding(16.dp),
@@ -223,6 +225,14 @@ private fun LoginListItem(
         )
     }
 }
+
+private fun uzmiTri(
+    data: Cat
+): List<String> {
+    val temperamentList = data.temperament.split(",") // Razdvojiti temperament po zarezu
+    return temperamentList.shuffled().take(3) // Nasumično izabrati tri temperamenta
+}
+
 
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Preview

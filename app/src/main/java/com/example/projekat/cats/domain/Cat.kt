@@ -4,10 +4,11 @@ data class Cat(
     val id: String,
     val name: String,
 //    val alt_names: String,
-//    var description: String,
-//    var descriptionShort: String,
-//    var temperament: List<String>,
-//    var temperamentThree: List<String> = temperamentList.take(3),
+    var description: String,
+//    var descriptionShort: String = description.substring(0, 250),
+    var temperament: String,
+//    var temperamentThree: List<String>,
+//    var tmp: List<String>,
     // dodati sliku, saznati kako
 //    var countriesOfOrigin: List<String>,
 //    val averageAge: String,
@@ -17,13 +18,11 @@ data class Cat(
 //    val link: String
 ) {
 //    init {
-//        descriptionShort = if (descriptionLong.length > 250) {
-//            descriptionLong.substring(0, 250)
-//        }else{
-//            descriptionLong
-//        }
-//        if (temperamentList.size > 3) {
-//            val shuffledTemperaments = temperamentList.toMutableList().apply { shuffle() }
+//
+//         tmp = temperament.split(",")
+//
+//        if (tmp.size > 3) {
+//            val shuffledTemperaments = tmp.toMutableList().apply { shuffle() }
 //            temperamentThree = shuffledTemperaments.subList(0, 3)
 //        }
 //    }

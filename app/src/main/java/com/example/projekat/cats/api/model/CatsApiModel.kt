@@ -12,10 +12,11 @@ data class CatsApiModel(
 //    @SerialName("alt_names")
 //    val alt_names: String,
 //    @SerialName("description")
-//    var description: String,
+    var description: String,
 //    var descriptionShort: String,
 //    @SerialName("temperament")
-//    val temperament: List<String>,
-//    val temperamentThree: List<String> = temperamentList.take(3),
+    val temperament: String,
+//    val temperamentThree: List<String>,
+//    var tmp: List<String>
 //    @SerialName("life_span") val averageAge: String,
 )

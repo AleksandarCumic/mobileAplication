@@ -64,9 +64,10 @@ class CatsListViewModel (
         id = this.id,
         name = this.name,
 //        alt_names = this.alt_names,
-//        description = this.description,
+        description = this.description,
 //        descriptionShort = this.descriptionShort,
-//        temperament = this.temperament,
-//        temperamentThree = this.temperamentThree
+        temperament = this.temperament,
+//        temperamentThree = this.temperamentThree,
+//        tmp = this.tmp
     )
 }
