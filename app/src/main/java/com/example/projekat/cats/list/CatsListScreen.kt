@@ -47,24 +47,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
 
-//@ExperimentalMaterial3Api
-//fun NavGraphBuilder.catsListScreen(
-//    route: String,
-//    navController: NavController,
-//) = composable(route = route) {
-//    val catListViewModel = viewModel<CatsListViewModel>()
-//    val state by catListViewModel.state.collectAsState()
-//
-//    CatListScreen(
-//        state = state,
-//        onInsertClick = {
-//            navController.navigate(route = "cats/editor")
-//        },
-//        onItemClick = {
-//            navController.navigate(route = "cats/${it.id}")
-//        },
-//    )
-//}
+@ExperimentalMaterial3Api
+fun NavGraphBuilder.catsListScreen(
+    route: String,
+    navController: NavController,
+) = composable(route = route) {
+    val catListViewModel = viewModel<CatsListViewModel>()
+    val state by catListViewModel.state.collectAsState()
+
+    CatListScreen(
+        state = state,
+        onInsertClick = {
+            navController.navigate(route = "cats/editor")
+        },
+        onItemClick = {
+            navController.navigate(route = "cats/${it.id}")
+        },
+    )
+}
 
 
 @ExperimentalMaterial3Api
@@ -201,19 +201,20 @@ private fun LoginListItem(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = data.nameofTheBreed + " (" + data.alternateName + ")",
+//                text = data.name + " (" + data.alternateName + ")",
+                text = data.name,
                 style = TextStyle(fontWeight = FontWeight.Bold)
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = data.descriptionShort,
-                style = TextStyle(color = Color.Gray)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Temperament: " + data.temperamentThree.joinToString(", "),
-                style = TextStyle(fontStyle = FontStyle.Italic)
-            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Text(
+//                text = data.descriptionShort,
+//                style = TextStyle(color = Color.Gray)
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Text(
+//                text = "Temperament: " + data.temperamentThree.joinToString(", "),
+//                style = TextStyle(fontStyle = FontStyle.Italic)
+//            )
         }
         Icon(
             modifier = Modifier.padding(16.dp),
@@ -223,16 +224,16 @@ private fun LoginListItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun PreviewCatListScreen() {
-    ProjekatTheme {
-        CatListScreen(
-            state = CatsListState(cats = SampleData),
-            onInsertClick = {},
-            onItemClick = {},
-        )
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Preview
+//@Composable
+//fun PreviewCatListScreen() {
+//    ProjekatTheme {
+//        CatListScreen(
+//            state = CatsListState(cats = SampleData),
+//            onInsertClick = {},
+//            onItemClick = {},
+//        )
+//    }
+//}
 

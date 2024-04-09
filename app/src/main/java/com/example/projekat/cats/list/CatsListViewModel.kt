@@ -2,6 +2,8 @@ package com.example.projekat.cats.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.projekat.cats.api.model.CatsApiModel
+import com.example.projekat.cats.domain.Cat
 import com.example.projekat.cats.repository.CatsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +23,7 @@ class CatsListViewModel (
 
 
     init {
-        observeCats()
+//        observeCats()
         fetchCats()
     }
 
@@ -30,13 +32,13 @@ class CatsListViewModel (
      * underlying data changes. We are using viewModelScope which
      * will cancel the subscription when view model dies.
      */
-    private fun observeCats() {
-        viewModelScope.launch {
-            repository.observeCats().collect { cats ->
-                _state.value = cats?.let { _state.value.copy(cats = it) }!!
-            }
-        }
-    }
+//    private fun observeCats() {
+//        viewModelScope.launch {
+//            repository.observeCats().collect { cats ->
+//                _state.value = cats?.let { _state.value.copy(cats = it) }!!
+//            }
+//        }
+//    }
 
     /**
      * Fetches passwords from simulated api endpoint and
@@ -46,9 +48,10 @@ class CatsListViewModel (
         viewModelScope.launch {
             _state.value = _state.value.copy(fetching = true)
             try {
-                withContext(Dispatchers.IO) {
-                    repository.fetchAllCats()
+                val cats = withContext(Dispatchers.IO) {
+                    repository.fetchAllCats().map {it.asCats()}
                 }
+                setState { copy(cats = cats) }
             } catch (error: IOException) {
                 _state.value = _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
             } finally {
@@ -56,4 +59,10 @@ class CatsListViewModel (
             }
         }
     }
+
+    private fun CatsApiModel.asCats() = Cat(
+        id = this.id,
+        name = this.nameofTheBreed,
+//        description = this.description,
+    )
 }

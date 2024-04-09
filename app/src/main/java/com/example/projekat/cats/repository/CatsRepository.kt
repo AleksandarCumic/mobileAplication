@@ -23,25 +23,25 @@ object CatsRepository {
     private val cats = MutableStateFlow<List<Cat>?>(null)
     private val catsApi: CatsApi = retrofit.create(CatsApi::class.java)
 
-    suspend fun fetchAllCats(): List<CatsApiModel> {
-        return try {
-            // We can here save this locally, or do any other calculations or whatever
-            delay(2.seconds)
-            catsApi.getAllCats()
-        } catch (e: Exception) {
-            // Handle the exception here
-            emptyList()
-        }
-    }
+    suspend fun fetchAllCats(): List<CatsApiModel> = catsApi.getAllCats()
+//        return try {
+//            // We can here save this locally, or do any other calculations or whatever
+//            delay(2.seconds)
+//            catsApi.getAllCats()
+//        } catch (e: Exception) {
+//            // Handle the exception here
+//            emptyList()
+//        }
+//    }
 
     /**
      * Simulates api network request which downloads sample data
      * from network and updates passwords in this repository.
      */
-    suspend fun fetchCats() {
-        delay(2.seconds)
-        cats.update { SampleData.toList() }
-    }
+//    suspend fun fetchCats() {
+//        delay(2.seconds)
+//        cats.update { SampleData.toList() }
+//    }
 
     suspend fun fetchCatDetails(catId: String) {
         delay(1.seconds)

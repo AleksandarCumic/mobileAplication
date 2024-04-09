@@ -7,16 +7,16 @@ import kotlinx.serialization.Serializable
 data class CatsApiModel(
     //@SerialName("id")
     val id: String,
-    //@SerialName("name")
+    @SerialName("name")
     val nameofTheBreed: String,
-    //@SerialName("alt_names")
-    val alternateName: String,
-    //@SerialName("description")
-    var descriptionLong: String,
-    var descriptionShort: String,
+//    //@SerialName("alt_names")
+//    val alternateName: String,
+//    //@SerialName("description")
+//    var descriptionLong: String,
+//    var descriptionShort: String,
     //@SerialName("temperament") 
-    val temperamentList: List<String>,
-    val temperamentThree: List<String> = temperamentList.take(3),
+//    val temperamentList: List<String>,
+//    val temperamentThree: List<String> = temperamentList.take(3),
     @SerialName("life_span") val averageAge: String,
 )
 

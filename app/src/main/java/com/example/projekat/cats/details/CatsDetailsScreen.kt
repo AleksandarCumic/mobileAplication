@@ -97,7 +97,7 @@ fun CatsDetailsScreen(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text(text = state.data?.nameofTheBreed ?: "Loading")
+                    Text(text = state.data?.name ?: "Loading")
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -176,7 +176,7 @@ private fun CatColumn(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.headlineSmall,
-            text = data.nameofTheBreed,
+            text = data.name,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -184,7 +184,7 @@ private fun CatColumn(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.bodyLarge,
-            text = data.descriptionShort,
+            text = data.name,
         )
 
         Spacer(modifier = Modifier.height(32.dp))
