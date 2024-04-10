@@ -24,28 +24,13 @@ object CatsRepository {
     private val catsApi: CatsApi = retrofit.create(CatsApi::class.java)
 
     suspend fun fetchAllCats(): List<CatsApiModel> = catsApi.getAllCats()
-//        return try {
-//            // We can here save this locally, or do any other calculations or whatever
-//            delay(2.seconds)
-//            catsApi.getAllCats()
-//        } catch (e: Exception) {
-//            // Handle the exception here
-//            emptyList()
-//        }
-//    }
 
     /**
      * Simulates api network request which downloads sample data
      * from network and updates passwords in this repository.
      */
-//    suspend fun fetchCats() {
-//        delay(2.seconds)
-//        cats.update { SampleData.toList() }
-//    }
 
-    suspend fun fetchCatDetails(catId: String) {
-        delay(1.seconds)
-    }
+    suspend fun fetchCatDetails(catId: String): CatsApiModel = catsApi.getCat(catId = catId)
 
     /**
      * Returns StateFlow which holds all passwords.
@@ -63,7 +48,7 @@ object CatsRepository {
 
     // Ovo sve ispod je za editor ekran koji nemam
     
-    fun getCatById(id: String): Cat? {
+    private fun getCatById(id: String): Cat? {
         return cats.value?.find { it.id == id }
     }
 }

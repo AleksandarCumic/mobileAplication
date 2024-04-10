@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
+// OVO JE ZA SVE MACKE
+
 class CatsListViewModel (
     private val repository: CatsRepository = CatsRepository
 ) : ViewModel() {
@@ -32,6 +34,7 @@ class CatsListViewModel (
      * underlying data changes. We are using viewModelScope which
      * will cancel the subscription when view model dies.
      */
+
 //    private fun observeCats() {
 //        viewModelScope.launch {
 //            repository.observeCats().collect { cats ->
@@ -63,11 +66,16 @@ class CatsListViewModel (
     private fun CatsApiModel.asCats() = Cat(
         id = this.id,
         name = this.name,
-//        alt_names = this.alt_names,
+        alternativeNames = this.alternativeNames,
         description = this.description,
-//        descriptionShort = this.descriptionShort,
         temperament = this.temperament,
-//        temperamentThree = this.temperamentThree,
-//        tmp = this.tmp
+        origin = this.origin,
+        lifeSpan = this.lifeSpan,
+        adaptability = this.adaptability,
+        affectionLevel = this.affectionLevel,
+        imageUrl = this.image.url,
+        rare = this.rare,
+        weight = this.weight.metric,
+        wikipediaURL = this.wikipediaURL
     )
 }

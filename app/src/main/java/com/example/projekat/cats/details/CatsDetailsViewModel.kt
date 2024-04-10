@@ -2,17 +2,17 @@ package com.example.projekat.cats.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.projekat.cats.list.CatsDetailsUiEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.example.projekat.cats.api.model.CatsApiModel
+import com.example.projekat.cats.domain.Cat
+import com.example.projekat.cats.list.CatsListState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.example.projekat.cats.repository.CatsRepository
 import java.io.IOException
+
+// OVO JE ZA JEDNU MACKU
 
 class CatsDetailsViewModel(
     private val catId: String,
@@ -24,16 +24,8 @@ class CatsDetailsViewModel(
     private fun setState(reducer: CatsDetailsState.() -> CatsDetailsState) =
         _state.getAndUpdate(reducer)
 
-
-    private val events = MutableSharedFlow<CatsDetailsUiEvent>()
-    fun setEvent(event: CatsDetailsUiEvent) {
-        viewModelScope.launch {
-            events.emit(event)
-        }
-    }
-
     init {
-        observeCatDetails()
+//        observeCatDetails()
         fetchCatDetails()
     }
 
@@ -41,15 +33,15 @@ class CatsDetailsViewModel(
      * Observes password details data from our local data
      * and updates the state.
      */
-    private fun observeCatDetails() {
-        viewModelScope.launch {
-            repository.observeCatDetails(catId = catId)
-                .filterNotNull()
-                .collect {
-                    setState { copy(data = it) }
-                }
-        }
-    }
+//    private fun observeCatDetails() {
+//        viewModelScope.launch {
+//            repository.observeCatDetails(catId = catId)
+//                .filterNotNull()
+//                .collect {
+//                    setState { copy(data = it) }
+//                }
+//        }
+//    }
 
     /**
      * Triggers updating local password details by calling "api"
@@ -62,18 +54,35 @@ class CatsDetailsViewModel(
      */
     private fun fetchCatDetails() {
         viewModelScope.launch {
-            setState { copy(fetching = true) }
+            _state.value = _state.value.copy(fetching = true)
             try {
-                withContext(Dispatchers.IO) {
-                    repository.fetchCatDetails(catId = catId)
+                val catDetails = repository.fetchAllCats().find { it.id == catId } // Pronalazi mačku sa datim catId
+                catDetails?.let {
+                    val cat = it.specificCat()
+                    setState { copy(data = cat) } // Postavlja detalje mačke u stanje
                 }
             } catch (error: IOException) {
-                setState {
-                    copy(error = CatsDetailsState.DetailsError.DataUpdateFailed(cause = error))
-                }
+                _state.value = _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
             } finally {
-                setState { copy(fetching = false) }
+                _state.value = _state.value.copy(fetching = false)
             }
         }
     }
+
+
+    private fun CatsApiModel.specificCat() = Cat(
+        id = this.id,
+        name = this.name,
+        alternativeNames = this.alternativeNames,
+        description = this.description,
+        temperament = this.temperament,
+        origin = this.origin,
+        lifeSpan = this.lifeSpan,
+        adaptability = this.adaptability,
+        affectionLevel = this.affectionLevel,
+        imageUrl = this.image.url,
+        rare = this.rare,
+        weight = this.weight.metric,
+        wikipediaURL = this.wikipediaURL
+    )
 }

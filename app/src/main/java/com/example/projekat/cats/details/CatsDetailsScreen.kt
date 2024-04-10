@@ -72,12 +72,6 @@ fun NavGraphBuilder.catsDetails(
 
     CatsDetailsScreen(
         state = state.value,
-        eventPublisher = {
-            catsDetailsViewModel.setEvent(it)
-        },
-        onEditClick = {
-            navController.navigate(route = "passwords/editor?id=${state.value.catId}")
-        },
         onClose = {
             navController.navigateUp()
         }
@@ -89,8 +83,6 @@ fun NavGraphBuilder.catsDetails(
 @Composable
 fun CatsDetailsScreen(
     state: CatsDetailsState,
-    eventPublisher: (CatsDetailsUiEvent) -> Unit,
-    onEditClick: () -> Unit,
     onClose: () -> Unit,
 ) {
     Scaffold(
@@ -103,25 +95,6 @@ fun CatsDetailsScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
-                actions = {
-                    if (state.data != null) {
-                        DeleteAppIconButton(
-                            onDeleteConfirmed = {
-                                eventPublisher(
-                                    CatsDetailsUiEvent.RequestCatDelete(
-                                        catId = state.catId
-                                    )
-                                )
-                                onClose()
-                            }
-                        )
-
-                        AppIconButton(
-                            imageVector = Icons.Default.Edit,
-                            onClick = onEditClick,
-                        )
-                    }
-                },
                 navigationIcon = {
                     AppIconButton(
                         imageVector = Icons.Default.ArrowBack,
@@ -148,11 +121,7 @@ fun CatsDetailsScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        val errorMessage = when (state.error) {
-                            is CatsDetailsState.DetailsError.DataUpdateFailed ->
-                                "Failed to load. Error message: ${state.error.cause?.message}."
-                        }
-                        Text(text = errorMessage)
+                        Text(text = "Doslo je do greske")
                     }
                 } else if (state.data != null) {
                     CatColumn(
@@ -184,48 +153,58 @@ private fun CatColumn(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.bodyLarge,
-            text = data.name,
+            text = data.description,
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = data.origin,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = data.temperament,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = data.lifeSpan,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Adaptability:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.adaptability)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Affection Level:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.affectionLevel)
+        
         Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
-@Composable
-private fun DeleteAppIconButton(
-    onDeleteConfirmed: () -> Unit,
-) {
-    var confirmationDeleteShown by remember { mutableStateOf(false) }
-    if (confirmationDeleteShown) {
-        AlertDialog(
-            onDismissRequest = { confirmationDeleteShown = false },
-            title = { Text(text = stringResource(id = R.string.editor_delete_confirmation_title)) },
-            text = {
-                Text(
-                    text = stringResource(R.string.editor_delete_confirmation_simple_text)
-                )
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmationDeleteShown = false }) {
-                    Text(text = stringResource(id = R.string.editor_delete_confirmation_dismiss))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    confirmationDeleteShown = false
-                    onDeleteConfirmed()
-                }) {
-                    Text(text = stringResource(id = R.string.editor_delete_confirmation_yes))
-                }
-            },
-        )
-    }
-
-    AppIconButton(
-        imageVector = Icons.Default.Delete,
-        onClick = { confirmationDeleteShown = true },
-    )
-}
+val goldColor = Color(0xFFFFD700)
 
 @Composable
 fun RatingBar(
@@ -233,7 +212,7 @@ fun RatingBar(
     maxRating: Int = 5,
     filledIcon: ImageVector = Icons.Default.Star,
     emptyIcon: ImageVector = Icons.Default.Star,
-    iconTint: Color = Color.Yellow
+    iconTint: Color = goldColor
 ) {
     Row {
         repeat(maxRating) { index ->
@@ -243,7 +222,7 @@ fun RatingBar(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(end = 4.dp)
+                    .padding(end = 12.dp)
                     .weight(1f),
                 tint = tint
             )

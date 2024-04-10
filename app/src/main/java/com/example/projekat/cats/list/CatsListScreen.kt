@@ -58,9 +58,7 @@ fun NavGraphBuilder.catsListScreen(
 
     CatListScreen(
         state = state,
-        onInsertClick = {
-            navController.navigate(route = "cats/editor")
-        },
+
         onItemClick = {
             navController.navigate(route = "cats/${it.id}")
         },
@@ -72,7 +70,6 @@ fun NavGraphBuilder.catsListScreen(
 @Composable
 fun CatListScreen(
     state: CatsListState?,
-    onInsertClick: () -> Unit,
     onItemClick: (Cat) -> Unit,
 ) {
     Scaffold(
@@ -84,16 +81,6 @@ fun CatListScreen(
                     scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
             )
-        },
-        floatingActionButton = {
-            LargeFloatingActionButton(
-                onClick = onInsertClick,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                )
-            }
         },
         content = {
             state?.let { currentState ->
@@ -202,8 +189,13 @@ private fun LoginListItem(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-//                text = data.name + " (" + data.alt_names + ")",
-                text = data.name,
+                text = buildString {
+                    append(data.name)
+                    if (!data.alternativeNames.isNullOrEmpty()) {
+                        append(" (${data.alternativeNames})")
+                    }
+                },
+//                text = data.name,
                 style = TextStyle(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -229,8 +221,8 @@ private fun LoginListItem(
 private fun uzmiTri(
     data: Cat
 ): List<String> {
-    val temperamentList = data.temperament.split(",") // Razdvojiti temperament po zarezu
-    return temperamentList.shuffled().take(3) // Nasumično izabrati tri temperamenta
+    val temperamentList = data.temperament.split(",")
+    return temperamentList.shuffled().take(3)
 }
 
 

@@ -12,10 +12,10 @@ interface CatsApi {
     @GET("breeds")
     suspend fun getAllCats(): List<CatsApiModel>
 
-//    @GET("users/{id}")
-//    suspend fun getUser(
-//        @Path("id") userId: Int,
-//    ): CatsApiModel
+    @GET("breeds/{id}")
+    suspend fun getCat(
+        @Path("id") catId: String,
+    ): CatsApiModel
 //
 //    @GET("users/{id}/albums")
 //    suspend fun getUserAlbums(
