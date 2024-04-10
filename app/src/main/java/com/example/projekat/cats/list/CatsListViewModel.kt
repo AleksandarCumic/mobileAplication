@@ -13,8 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-// OVO JE ZA SVE MACKE
-
 class CatsListViewModel (
     private val repository: CatsRepository = CatsRepository
 ) : ViewModel() {
@@ -64,6 +62,7 @@ class CatsListViewModel (
     }
 
     private fun CatsApiModel.asCats() = Cat(
+        weight = this.weight,
         id = this.id,
         name = this.name,
         alternativeNames = this.alternativeNames,
@@ -73,9 +72,19 @@ class CatsListViewModel (
         lifeSpan = this.lifeSpan,
         adaptability = this.adaptability,
         affectionLevel = this.affectionLevel,
-        imageUrl = this.image.url,
+        childFriendly = this.childFriendly,
+        dogFriendly = this.dogFriendly,
+        energyLevel = this.energyLevel,
+        grooming = this.grooming,
+        healthIssues = this.healthIssues,
+        intelligence = this.intelligence,
+        sheddingLevel = this.sheddingLevel,
+        socialNeeds = this.socialNeeds,
+        strangerFriendly = this.strangerFriendly,
+        vocalisation = this.vocalisation,
+
         rare = this.rare,
-        weight = this.weight.metric,
-        wikipediaURL = this.wikipediaURL
+        wikipediaURL = this.wikipediaURL,
+        referenceImageId = this.referenceImageId
     )
 }

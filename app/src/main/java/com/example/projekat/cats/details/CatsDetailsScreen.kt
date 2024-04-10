@@ -1,5 +1,12 @@
 package com.example.projekat.cats.details
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -43,10 +50,26 @@ import com.example.projekat.core.compose.AppIconButton
 import com.example.projekat.core.compose.NoDataContent
 import com.example.projekat.cats.list.CatsDetailsUiEvent
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import com.example.projekat.cats.api.model.ImageModel
+
 
 fun NavGraphBuilder.catsDetails(
     route: String,
@@ -108,6 +131,7 @@ fun CatsDetailsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
             ) {
                 if (state.fetching) {
                     Box(
@@ -124,9 +148,12 @@ fun CatsDetailsScreen(
                         Text(text = "Doslo je do greske")
                     }
                 } else if (state.data != null) {
-                    CatColumn(
-                        data = state.data,
-                    )
+                    state.imageModel?.let {
+                        CatColumn(
+                            data = state.data,
+                            image = it
+                        )
+                    }
                 } else {
                     NoDataContent(id = state.catId)
                 }
@@ -138,14 +165,55 @@ fun CatsDetailsScreen(
 @Composable
 private fun CatColumn(
     data: Cat,
+    image: ImageModel,
 ) {
     Column {
-        Spacer(modifier = Modifier.height(16.dp))
+
+        // Ovde cu da dodam sliku
+
+        val painter: Painter =
+            rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current).data(data = image.url).apply(block = fun ImageRequest.Builder.() {
+                    crossfade(true)
+                }).build()
+            )
+
+        Image(
+            painter = painter,
+            contentDescription = "Slika",
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+        )
+
+        if(data.alternativeNames.isNotEmpty()){
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Alternative names: ")
+                    }
+                    append(data.alternativeNames)
+                }
+            )
+        }
+
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.headlineSmall,
-            text = data.name,
+            style = MaterialTheme.typography.bodyLarge,
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Description: ")
+                }
+                append(data.description)
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -153,7 +221,12 @@ private fun CatColumn(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.bodyLarge,
-            text = data.description,
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Countries of origin: ")
+                }
+                append(data.origin)
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -161,7 +234,12 @@ private fun CatColumn(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.bodyLarge,
-            text = data.origin,
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Temperament: ")
+                }
+                append(data.temperament)
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -169,7 +247,12 @@ private fun CatColumn(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.bodyLarge,
-            text = data.temperament,
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Life span: ")
+                }
+                append(data.lifeSpan)
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -177,10 +260,16 @@ private fun CatColumn(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.bodyLarge,
-            text = data.lifeSpan,
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Weight: ")
+                }
+                append("\n - Metric: ${data.weight.metric}\n - Imperial: ${data.weight.imperial}")
+            }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -199,6 +288,134 @@ private fun CatColumn(
         )
         Spacer(modifier = Modifier.height(4.dp))
         RatingBar(rating = data.affectionLevel)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Child Friendly:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.childFriendly)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Dog Friendly:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.dogFriendly)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Energy Level:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.energyLevel)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Grooming:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.grooming)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Health Issues:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.healthIssues)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Intelligence:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.intelligence)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Shedding Level:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.sheddingLevel)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Social Needs:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.socialNeeds)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Stranger Friendly:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.strangerFriendly)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            text = "Vocalisation:",
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        RatingBar(rating = data.vocalisation)
+
+        Spacer(modifier = Modifier.height(16.dp))
+        val openWikipedia = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // Implementacija koja se izvršava kada se aktivnost završi
+            }
+        }
+        TextButton(
+            onClick = {
+                val wikipediaUrl = data.wikipediaURL
+                if (wikipediaUrl.isNotEmpty()) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wikipediaUrl))
+                    openWikipedia.launch(intent)
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(Color.Blue)
+                .padding(vertical = 8.dp),
+            shape = CircleShape,
+        ) {
+            Text(
+                text = "Open Wikipedia",
+                color = Color.White
+            )
+
+        }
         
         Spacer(modifier = Modifier.height(32.dp))
     }

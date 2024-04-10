@@ -2,6 +2,7 @@ package com.example.projekat.cats.repository
 
 import com.example.projekat.cats.api.CatsApi
 import com.example.projekat.cats.api.model.CatsApiModel
+import com.example.projekat.cats.api.model.ImageModel
 import com.example.projekat.cats.domain.Cat
 import com.example.projekat.networking.retrofit
 import kotlinx.coroutines.delay
@@ -31,6 +32,8 @@ object CatsRepository {
      */
 
     suspend fun fetchCatDetails(catId: String): CatsApiModel = catsApi.getCat(catId = catId)
+
+    suspend fun fetchImage(imageId: String): ImageModel = catsApi.getImage(imageId = imageId)
 
     /**
      * Returns StateFlow which holds all passwords.

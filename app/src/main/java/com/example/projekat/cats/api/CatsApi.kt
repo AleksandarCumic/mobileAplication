@@ -1,6 +1,7 @@
 package com.example.projekat.cats.api
 
 import com.example.projekat.cats.api.model.CatsApiModel
+import com.example.projekat.cats.api.model.ImageModel
 import com.example.projekat.cats.domain.Cat
 import com.example.projekat.networking.retrofit
 import retrofit2.http.DELETE
@@ -16,6 +17,13 @@ interface CatsApi {
     suspend fun getCat(
         @Path("id") catId: String,
     ): CatsApiModel
+
+    @GET("images/{id}")
+    suspend fun getImage(
+        @Path("id") imageId: String,
+    ): ImageModel
+
+
 //
 //    @GET("users/{id}/albums")
 //    suspend fun getUserAlbums(

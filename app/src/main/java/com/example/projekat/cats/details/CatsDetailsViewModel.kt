@@ -1,5 +1,6 @@
 package com.example.projekat.cats.details
 
+import androidx.collection.intFloatMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.projekat.cats.api.model.CatsApiModel
@@ -12,7 +13,6 @@ import kotlinx.coroutines.launch
 import com.example.projekat.cats.repository.CatsRepository
 import java.io.IOException
 
-// OVO JE ZA JEDNU MACKU
 
 class CatsDetailsViewModel(
     private val catId: String,
@@ -27,6 +27,7 @@ class CatsDetailsViewModel(
     init {
 //        observeCatDetails()
         fetchCatDetails()
+
     }
 
     /**
@@ -56,11 +57,10 @@ class CatsDetailsViewModel(
         viewModelScope.launch {
             _state.value = _state.value.copy(fetching = true)
             try {
-                val catDetails = repository.fetchAllCats().find { it.id == catId } // Pronalazi mačku sa datim catId
-                catDetails?.let {
-                    val cat = it.specificCat()
-                    setState { copy(data = cat) } // Postavlja detalje mačke u stanje
-                }
+                val catDetails = repository.fetchCatDetails(catId = catId).specificCat()
+                    setState { copy(catId = catDetails.id) }
+                    setState { copy(data = catDetails) }
+                fetchImage(catDetails.referenceImageId)
             } catch (error: IOException) {
                 _state.value = _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
             } finally {
@@ -69,8 +69,21 @@ class CatsDetailsViewModel(
         }
     }
 
-
+    private fun fetchImage(referenceImageId: String){
+        viewModelScope.launch {
+            _state.value = _state.value.copy(fetching = true)
+            try {
+                val imageModel = repository.fetchImage(imageId = referenceImageId)
+                setState { copy(imageModel = imageModel) }
+            } catch (error: IOException) {
+                _state.value = _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
+            } finally {
+                _state.value = _state.value.copy(fetching = false)
+            }
+        }
+    }
     private fun CatsApiModel.specificCat() = Cat(
+        weight = this.weight,
         id = this.id,
         name = this.name,
         alternativeNames = this.alternativeNames,
@@ -80,9 +93,19 @@ class CatsDetailsViewModel(
         lifeSpan = this.lifeSpan,
         adaptability = this.adaptability,
         affectionLevel = this.affectionLevel,
-        imageUrl = this.image.url,
+        childFriendly = this.childFriendly,
+        dogFriendly = this.dogFriendly,
+        energyLevel = this.energyLevel,
+        grooming = this.grooming,
+        healthIssues = this.healthIssues,
+        intelligence = this.intelligence,
+        sheddingLevel = this.sheddingLevel,
+        socialNeeds = this.socialNeeds,
+        strangerFriendly = this.strangerFriendly,
+        vocalisation = this.vocalisation,
+
         rare = this.rare,
-        weight = this.weight.metric,
-        wikipediaURL = this.wikipediaURL
+        wikipediaURL = this.wikipediaURL,
+        referenceImageId = this.referenceImageId,
     )
 }

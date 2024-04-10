@@ -87,4 +87,8 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Wiki
+    implementation("androidx.activity:activity-ktx:1.4.0")
+
 }

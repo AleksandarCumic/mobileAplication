@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CatsApiModel(
+    val weight: Weight,
     val id: String,
     val name: String,
     @SerialName("alt_names") val alternativeNames: String = "",
@@ -12,14 +13,28 @@ data class CatsApiModel(
     val temperament: String,
     val origin: String,
     @SerialName("life_span") val lifeSpan: String = "",
-    val image: Image = Image("0", 0, 0, "0"),
-    val weight: Weight,
-    @SerialName("wikipedia_url") val wikipediaURL: String = "",
-    val rare: Int,
+
+
 
     val adaptability: Int,
     @SerialName("affection_level") val affectionLevel: Int,
-)
+    @SerialName("child_friendly") val childFriendly: Int,
+    @SerialName("dog_friendly") val dogFriendly: Int,
+    @SerialName("energy_level") val energyLevel: Int,
+    val grooming: Int,
+    @SerialName("health_issues") val healthIssues: Int,
+    val intelligence: Int,
+    @SerialName("shedding_level") val sheddingLevel: Int,
+    @SerialName("social_needs") val socialNeeds: Int,
+    @SerialName("stranger_friendly") val strangerFriendly: Int,
+    val vocalisation: Int,
+
+    val rare: Int,
+    @SerialName("wikipedia_url") val wikipediaURL: String = "",
+
+    @SerialName("reference_image_id") val referenceImageId: String = "",
+
+    )
 
 @Serializable
 data class Weight(
@@ -27,13 +42,7 @@ data class Weight(
     val metric: String
 )
 
-@Serializable
-data class Image(
-    val id: String,
-    val width: Int,
-    val height: Int,
-    val url: String
-)
+
 
 //{
 //    "weight": {
