@@ -109,7 +109,7 @@ fun CatListScreen(
                 Column(
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .align(Alignment.BottomStart) // Segment pretrage je sada ispod naslova
+                        .align(Alignment.BottomStart)
                         .padding(bottom = 22.dp)
                 ) {
                     Row(
@@ -232,7 +232,7 @@ private fun CatList(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(text = "No cats.", textAlign = TextAlign.Center)
+                        Text(text = "There are no cats available for this search.", textAlign = TextAlign.Center)
                     }
                 }
             }

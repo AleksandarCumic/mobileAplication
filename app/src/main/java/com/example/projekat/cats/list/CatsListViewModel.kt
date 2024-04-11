@@ -22,29 +22,11 @@ class CatsListViewModel (
     val state = _state.asStateFlow()
     private fun setState(reducer: CatsListState.() -> CatsListState) = _state.getAndUpdate(reducer)
 
-    fun onEvent(event: CatsListUiEvent){
-        when (event) {
-            is CatsListUiEvent.SearchQueryChanged -> handleSearchQueryChanged(event.query)
-            is CatsListUiEvent.ClearSearch -> clearSearch()
-        }
-    }
-
 
     init {
         fetchCats()
     }
 
-    /**
-     * This will observe all passwords and update state whenever
-     * underlying data changes. We are using viewModelScope which
-     * will cancel the subscription when view model dies.
-     */
-
-
-    /**
-     * Fetches passwords from simulated api endpoint and
-     * replaces existing passwords with "downloaded" passwords.
-     */
     private fun fetchCats() {
         viewModelScope.launch {
             _state.value = _state.value.copy(fetching = true)
@@ -96,16 +78,11 @@ class CatsListViewModel (
                 }
                 setState { copy(cats = filteredCats) }
             } catch (error: IOException) {
-                _state.value = _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
+                _state.value =
+                    _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
             } finally {
                 _state.value = _state.value.copy(fetching = false)
             }
-        }
-    }
-
-    fun handleSearchQueryChanged(query: String){
-        viewModelScope.launch {
-            searchCatsByName(query)
         }
     }
 

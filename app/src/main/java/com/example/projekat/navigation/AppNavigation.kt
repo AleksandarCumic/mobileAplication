@@ -10,8 +10,6 @@ import com.example.projekat.cats.details.catsDetails
 import com.example.projekat.cats.list.catsListScreen
 import com.example.projekat.cats.repository.CatsRepository
 
-//Ovde ce se obradjivati rute koje se nalaze u specifikaciji,
-//treba saznati sta ce se tacno odraditi kada se dodje do datih putanje
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,15 +31,5 @@ fun AppNavigation() {
             navController = navController,
         )
 
-//        passwordsEditor(
-//            route = "passwords/editor?id={dataId}",
-//            arguments = listOf(
-//                navArgument(name = "dataId") {
-//                    this.type = NavType.StringType
-//                    this.nullable = true
-//                }
-//            ),
-//            navController = navController,
-//        )
     }
 }

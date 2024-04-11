@@ -67,13 +67,10 @@ fun NavGraphBuilder.catsDetails(
     val dataId = navBackStackEntry.arguments?.getString("id")
         ?: throw IllegalArgumentException("id is required.")
 
-    // We have to provide factory class to instantiate our view model
-    // since it has a custom property in constructor
     val catsDetailsViewModel = viewModel<CatsDetailsViewModel>(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                // We pass the passwordId which we read from arguments above
                 return CatsDetailsViewModel(catId = dataId) as T
             }
         },
@@ -374,9 +371,7 @@ private fun CatColumn(
 
         Spacer(modifier = Modifier.height(16.dp))
         val openWikipedia = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                // Implementacija koja se izvršava kada se aktivnost završi
-            }
+
         }
         TextButton(
             onClick = {

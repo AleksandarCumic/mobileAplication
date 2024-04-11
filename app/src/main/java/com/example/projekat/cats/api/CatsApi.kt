@@ -2,9 +2,6 @@ package com.example.projekat.cats.api
 
 import com.example.projekat.cats.api.model.CatsApiModel
 import com.example.projekat.cats.api.model.ImageModel
-import com.example.projekat.cats.domain.Cat
-import com.example.projekat.networking.retrofit
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
