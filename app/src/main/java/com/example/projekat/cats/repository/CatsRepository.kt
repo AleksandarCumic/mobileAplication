@@ -21,9 +21,12 @@ import kotlin.time.Duration.Companion.seconds
  */
 object CatsRepository {
 
-    private val cats = MutableStateFlow<List<Cat>?>(null)
+    private val cats = MutableStateFlow<List<CatsApiModel>?>(null)
     private val catsApi: CatsApi = retrofit.create(CatsApi::class.java)
 
+    suspend fun saveCats(cat: CatsApiModel){
+        cats.value = cats.value.orEmpty() + cat
+    }
     suspend fun fetchAllCats(): List<CatsApiModel> = catsApi.getAllCats()
 
     /**
@@ -35,23 +38,12 @@ object CatsRepository {
 
     suspend fun fetchImage(imageId: String): ImageModel = catsApi.getImage(imageId = imageId)
 
-    /**
-     * Returns StateFlow which holds all passwords.
-     */
-    fun observeCats(): StateFlow<List<Cat>?> = cats.asStateFlow()
-
-    /**
-     * Returns regular flow with Cat with given catId.
-     */
-    fun observeCatDetails(catId: String): Flow<Cat?> {
-        return observeCats()
-            .map { passwords -> passwords?.find { it.id == catId } }
-            .distinctUntilChanged()
+    suspend fun searchCatsByName(nameQuery: String): List<CatsApiModel> {
+        return catsApi.getSearch(nameQuery)
     }
+
 
     // Ovo sve ispod je za editor ekran koji nemam
     
-    private fun getCatById(id: String): Cat? {
-        return cats.value?.find { it.id == id }
-    }
+
 }

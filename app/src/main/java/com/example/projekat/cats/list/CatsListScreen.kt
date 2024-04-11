@@ -13,15 +13,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,10 +31,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -41,12 +50,6 @@ import androidx.navigation.compose.composable
 import com.example.projekat.cats.domain.Cat
 import com.example.projekat.cats.repository.SampleData
 import com.example.projekat.core.theme.ProjekatTheme
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.substring
-
 
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.catsListScreen(
@@ -58,24 +61,59 @@ fun NavGraphBuilder.catsListScreen(
 
     CatListScreen(
         state = state,
-
         onItemClick = {
             navController.navigate(route = "cats/${it.id}")
         },
+        onSearch = { searchText ->
+            catListViewModel.searchCatsByName(searchText)
+        },
+        resetSearch = {
+            catListViewModel.clearSearch()
+        }
     )
 }
-
 
 @ExperimentalMaterial3Api
 @Composable
 fun CatListScreen(
     state: CatsListState?,
     onItemClick: (Cat) -> Unit,
+    onSearch: (String) -> Unit,
+    resetSearch: () -> Unit,
 ) {
+    var searchText by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = "List of Cats") },
+                actions = {
+                    Box(modifier = Modifier.weight(1f)) {
+                        OutlinedTextField(
+                            value = searchText,
+                            onValueChange = { searchText = it },
+                            label = { Text("Search") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 8.dp)
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            if (searchText.isNotBlank()) {
+                                onSearch(searchText)
+                            } else {
+                                searchText = ""
+                                resetSearch()
+                            }
+                        },
+                        modifier = Modifier
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -83,6 +121,7 @@ fun CatListScreen(
             )
         },
         content = {
+            Spacer(modifier = Modifier.height(50.dp))
             state?.let { currentState ->
                 CatList(
                     paddingValues = it,
@@ -104,9 +143,6 @@ private fun CatList(
     fetching: Boolean,
     error: CatsListState.ListError?,
 ) {
-    // LazyColumn should be used for infinite lists which we will
-    // learn soon. In the meantime we can use Column with verticalScroll
-    // modifier so it can be scrollable.
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -117,7 +153,6 @@ private fun CatList(
         verticalArrangement = Arrangement.Top,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-
         items.forEach {
             Column {
                 key(it.id) {
@@ -171,13 +206,10 @@ private fun CatList(
     }
 }
 
-
-
 @Composable
 private fun LoginListItem(
     data: Cat,
     onClick: () -> Unit,
-
 ) {
     Card(
         modifier = Modifier
@@ -195,7 +227,6 @@ private fun LoginListItem(
                         append(" (${data.alternativeNames})")
                     }
                 },
-//                text = data.name,
                 style = TextStyle(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -204,7 +235,7 @@ private fun LoginListItem(
                 style = TextStyle(color = Color.Gray)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            val temperamentList = uzmiTri(data).joinToString(", ") // Prikaži tri nasumično odabrana temperamenta
+            val temperamentList = uzmiTri(data).joinToString(", ")
             Text(
                 text = temperamentList,
                 style = TextStyle(fontStyle = FontStyle.Italic)
@@ -218,24 +249,7 @@ private fun LoginListItem(
     }
 }
 
-private fun uzmiTri(
-    data: Cat
-): List<String> {
+private fun uzmiTri(data: Cat): List<String> {
     val temperamentList = data.temperament.split(",")
     return temperamentList.shuffled().take(3)
 }
-
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Preview
-//@Composable
-//fun PreviewCatListScreen() {
-//    ProjekatTheme {
-//        CatListScreen(
-//            state = CatsListState(cats = SampleData),
-//            onInsertClick = {},
-//            onItemClick = {},
-//        )
-//    }
-//}
-

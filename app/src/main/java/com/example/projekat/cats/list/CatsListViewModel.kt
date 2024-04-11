@@ -2,6 +2,7 @@ package com.example.projekat.cats.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.projekat.cats.api.model.CatsApiModel
 import com.example.projekat.cats.domain.Cat
 import com.example.projekat.cats.repository.CatsRepository
@@ -20,6 +21,13 @@ class CatsListViewModel (
     private val _state = MutableStateFlow(CatsListState())
     val state = _state.asStateFlow()
     private fun setState(reducer: CatsListState.() -> CatsListState) = _state.getAndUpdate(reducer)
+
+    fun onEvent(event: CatsListUiEvent){
+        when (event) {
+            is CatsListUiEvent.SearchQueryChanged -> handleSearchQueryChanged(event.query)
+            is CatsListUiEvent.ClearSearch -> clearSearch()
+        }
+    }
 
 
     init {
@@ -87,4 +95,32 @@ class CatsListViewModel (
         wikipediaURL = this.wikipediaURL,
         referenceImageId = this.referenceImageId
     )
+
+    fun searchCatsByName(nameQuery: String) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(fetching = true)
+            try {
+                val filteredCats = withContext(Dispatchers.IO) {
+                    repository.searchCatsByName(nameQuery).map { it.asCats() }
+                }
+                setState { copy(cats = filteredCats) }
+            } catch (error: IOException) {
+                _state.value = _state.value.copy(error = CatsListState.ListError.ListUpdateFailed(cause = error))
+            } finally {
+                _state.value = _state.value.copy(fetching = false)
+            }
+        }
+    }
+
+    fun handleSearchQueryChanged(query: String){
+        viewModelScope.launch {
+            searchCatsByName(query)
+        }
+    }
+
+    fun clearSearch(){
+        viewModelScope.launch{
+            fetchCats()
+        }
+    }
 }

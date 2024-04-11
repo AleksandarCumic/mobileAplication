@@ -7,6 +7,7 @@ import com.example.projekat.networking.retrofit
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface CatsApi {
 
@@ -23,14 +24,12 @@ interface CatsApi {
         @Path("id") imageId: String,
     ): ImageModel
 
+    //https://api.thecatapi.com/v1/breeds/search?q=query
 
-//
-//    @GET("users/{id}/albums")
-//    suspend fun getUserAlbums(
-//        @Path("id") userId: Int,
-//    ): List<CatsApiModel>
-//
-//    @DELETE("users/{id}")
-//    suspend fun deleteUser()
+    @GET("breeds/search")
+    suspend fun getSearch(
+        @Query("q") query: String,
+    ): List<CatsApiModel>
+
 
 }
