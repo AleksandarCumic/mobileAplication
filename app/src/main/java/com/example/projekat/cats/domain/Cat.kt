@@ -3,8 +3,8 @@ package com.example.projekat.cats.domain
 import com.example.projekat.cats.api.model.Weight
 
 data class Cat(
-    val id: String,
     val name: String,
+    val id: String,
     val alternativeNames: String,
     var description: String,
     var temperament: String,

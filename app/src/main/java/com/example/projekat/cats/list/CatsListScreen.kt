@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -40,9 +42,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
@@ -85,6 +90,7 @@ fun CatListScreen(
     resetSearch: () -> Unit,
 ) {
     var searchText by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
     Scaffold(
         topBar = {
             Box(
@@ -117,6 +123,21 @@ fun CatListScreen(
                             onValueChange = { searchText = it },
                             label = { Text("Search") },
                             modifier = Modifier.weight(1f),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Search
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onSearch = {
+                                    focusManager.clearFocus()
+                                    if (searchText.isNotBlank()) {
+                                        onSearch(searchText)
+                                    } else {
+                                        searchText = ""
+                                        resetSearch()
+                                    }
+                                }
+                            ),
                         )
                         IconButton(onClick = {
                             if (searchText.isNotBlank()) {
@@ -236,7 +257,7 @@ private fun LoginListItem(
             Text(
                 text = buildString {
                     append(data.name)
-                    if (!data.alternativeNames.isNullOrEmpty()) {
+                    if (data.alternativeNames.isNotEmpty()) {
                         append(" (${data.alternativeNames})")
                     }
                 },

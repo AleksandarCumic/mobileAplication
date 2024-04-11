@@ -31,7 +31,6 @@ class CatsListViewModel (
 
 
     init {
-//        observeCats()
         fetchCats()
     }
 
@@ -41,13 +40,6 @@ class CatsListViewModel (
      * will cancel the subscription when view model dies.
      */
 
-//    private fun observeCats() {
-//        viewModelScope.launch {
-//            repository.observeCats().collect { cats ->
-//                _state.value = cats?.let { _state.value.copy(cats = it) }!!
-//            }
-//        }
-//    }
 
     /**
      * Fetches passwords from simulated api endpoint and
@@ -58,7 +50,7 @@ class CatsListViewModel (
             _state.value = _state.value.copy(fetching = true)
             try {
                 val cats = withContext(Dispatchers.IO) {
-                    repository.fetchAllCats().map {it.asCats()}
+                    repository.fetchAllCats().map {it.allCats()}
                 }
                 setState { copy(cats = cats) }
             } catch (error: IOException) {
@@ -68,10 +60,10 @@ class CatsListViewModel (
             }
         }
     }
-
-    private fun CatsApiModel.asCats() = Cat(
-        weight = this.weight,
+    private fun CatsApiModel.allCats() = Cat(
         id = this.id,
+        weight = this.weight,
+
         name = this.name,
         alternativeNames = this.alternativeNames,
         description = this.description,
@@ -93,15 +85,14 @@ class CatsListViewModel (
 
         rare = this.rare,
         wikipediaURL = this.wikipediaURL,
-        referenceImageId = this.referenceImageId
-    )
+        referenceImageId = this.referenceImageId)
 
     fun searchCatsByName(nameQuery: String) {
         viewModelScope.launch {
             _state.value = _state.value.copy(fetching = true)
             try {
                 val filteredCats = withContext(Dispatchers.IO) {
-                    repository.searchCatsByName(nameQuery).map { it.asCats() }
+                    repository.searchCatsByName(nameQuery).map { it.allCats() }
                 }
                 setState { copy(cats = filteredCats) }
             } catch (error: IOException) {

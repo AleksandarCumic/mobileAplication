@@ -24,8 +24,6 @@ interface CatsApi {
         @Path("id") imageId: String,
     ): ImageModel
 
-    //https://api.thecatapi.com/v1/breeds/search?q=query
-
     @GET("breeds/search")
     suspend fun getSearch(
         @Query("q") query: String,

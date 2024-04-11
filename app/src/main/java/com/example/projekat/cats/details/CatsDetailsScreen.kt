@@ -98,9 +98,7 @@ fun CatsDetailsScreen(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = {
-                    Text(text = state.data?.name ?: "Loading")
-                },
+                title = { Text(text = state.data?.name ?: "Loading") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -155,8 +153,6 @@ private fun CatColumn(
     image: ImageModel,
 ) {
     Column {
-
-        // Ovde cu da dodam sliku
 
         val painter: Painter =
             rememberAsyncImagePainter(
