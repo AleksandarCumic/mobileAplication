@@ -1,10 +1,12 @@
 package com.example.projekat.cats.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -84,44 +87,55 @@ fun CatListScreen(
     var searchText by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "List of Cats") },
-                actions = {
-                    Box(modifier = Modifier.weight(1f)) {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .height(150.dp)
+            ) {
+                CenterAlignedTopAppBar(
+                    title = { Text(text = "List of Cats") },
+                    modifier = Modifier
+                        .align(Alignment.TopCenter),
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart) // Segment pretrage je sada ispod naslova
+                        .padding(bottom = 22.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(8.dp)
+                    ) {
                         OutlinedTextField(
                             value = searchText,
                             onValueChange = { searchText = it },
                             label = { Text("Search") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 8.dp)
+                            modifier = Modifier.weight(1f),
                         )
-                    }
-                    IconButton(
-                        onClick = {
+                        IconButton(onClick = {
                             if (searchText.isNotBlank()) {
                                 onSearch(searchText)
                             } else {
                                 searchText = ""
                                 resetSearch()
                             }
-                        },
-                        modifier = Modifier
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search"
-                        )
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                            )
+                        }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-            )
+                }
+            }
         },
         content = {
-            Spacer(modifier = Modifier.height(50.dp))
             state?.let { currentState ->
                 CatList(
                     paddingValues = it,
@@ -152,7 +166,6 @@ private fun CatList(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
         items.forEach {
             Column {
                 key(it.id) {
