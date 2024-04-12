@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,15 +47,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.projekat.cats.domain.Cat
-import com.example.projekat.cats.repository.SampleData
-import com.example.projekat.core.theme.ProjekatTheme
 
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.catsListScreen(
@@ -110,7 +105,7 @@ fun CatListScreen(
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(bottom = 22.dp)
+                        .padding(bottom = 16.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -190,7 +185,7 @@ private fun CatList(
         items.forEach {
             Column {
                 key(it.id) {
-                    LoginListItem(
+                    CatListItem(
                         data = it,
                         onClick = {
                             onItemClick(it)
@@ -241,7 +236,7 @@ private fun CatList(
 }
 
 @Composable
-private fun LoginListItem(
+private fun CatListItem(
     data: Cat,
     onClick: () -> Unit,
 ) {

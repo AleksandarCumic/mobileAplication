@@ -1,5 +1,6 @@
 package com.example.projekat.cats.details
 
+import android.annotation.SuppressLint
 import androidx.collection.intFloatMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,34 +26,10 @@ class CatsDetailsViewModel(
         _state.getAndUpdate(reducer)
 
     init {
-//        observeCatDetails()
         fetchCatDetails()
-
     }
 
-    /**
-     * Observes password details data from our local data
-     * and updates the state.
-     */
-//    private fun observeCatDetails() {
-//        viewModelScope.launch {
-//            repository.observeCatDetails(catId = catId)
-//                .filterNotNull()
-//                .collect {
-//                    setState { copy(data = it) }
-//                }
-//        }
-//    }
-
-    /**
-     * Triggers updating local password details by calling "api"
-     * to get latest data and update underlying local data we use.
-     *
-     * Note that we are not updating the state here. This is done
-     * from observeCatDetails(). Both functions are using
-     * the single source of truth (CatsRepository) so we can
-     * do this. If we break this principle, the app will stop working.
-     */
+    @SuppressLint("SuspiciousIndentation")
     private fun fetchCatDetails() {
         viewModelScope.launch {
             _state.value = _state.value.copy(fetching = true)

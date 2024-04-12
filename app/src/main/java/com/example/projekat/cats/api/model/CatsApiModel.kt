@@ -45,7 +45,7 @@ data class Weight(
 
 
 //{
-//    "weight": {
+//   "weight": {
 //    "imperial": "7  -  10",
 //    "metric": "3 - 5"
 //},

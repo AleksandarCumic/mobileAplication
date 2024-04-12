@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 object CatsRepository {
 
-    private val cats = MutableStateFlow<List<CatsApiModel>?>(null)
     private val catsApi: CatsApi = retrofit.create(CatsApi::class.java)
 
     suspend fun fetchAllCats(): List<CatsApiModel> = catsApi.getAllCats()
@@ -20,9 +19,5 @@ object CatsRepository {
     suspend fun searchCatsByName(nameQuery: String): List<CatsApiModel> {
         return catsApi.getSearch(nameQuery)
     }
-
-
-    // Ovo sve ispod je za editor ekran koji nemam
-    
 
 }
